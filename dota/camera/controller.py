@@ -28,7 +28,7 @@ def control_camera(camera_positions):
         start_time = dt.datetime.now()
         # Set camera to the right position
         x = pos['x']
-        y = -pos['y']
+        y = pos['y']
         camera.set(x, y)
         #print x, y
         print pos['time']
