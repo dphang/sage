@@ -16,6 +16,10 @@ class IndividualEvent:
         # Properties
         self._displacement = None
         self._movement = None
+        self._creep_attacks = None
+        self._hero_attacks = None
+        self._skill_uses = None
+        self._health = None
         
     # Features computed for each event
     
@@ -55,6 +59,63 @@ class IndividualEvent:
             
         return self._movement
     
+    @property
+    def creep_attacks(self):
+        
+        if self._creep_attacks is None:
+            self._creep_attacks = 0
+            
+            for i in xrange(len(self.data)):
+                events = self.data[i]['player_info'][self.index]['events']
+                for e in events:
+                    if e == 'Attacked Creep':
+                        self._creep_attacks += 1
+        
+        return self._creep_attacks
+    
+    @property
+    def hero_attacks(self):
+        
+        if self._hero_attacks is None:
+            self._hero_attacks = 0
+            
+            for i in xrange(len(self.data)):
+                events = self.data[i]['player_info'][self.index]['events']
+                for e in events:
+                    if e == 'Attacked Hero':
+                        self._hero_attacks += 1
+        
+        return self._hero_attacks
+    
+    @property
+    def skill_uses(self):
+        
+        if self._skill_uses is None:
+            self._skill_uses = 0
+            
+            for i in xrange(len(self.data)):
+                events = self.data[i]['player_info'][self.index]['events']
+                for e in events:
+                    if e == 'Helped Hero' or e == 'Helped Self':
+                        self._skill_uses += 1
+        
+        return self._skill_uses
+    
+    @property
+    def health(self):
+        
+        if self._health is None:
+            self._health = 0.0
+            
+            max_health = health = self.data[0]['player_info'][self.index]['max_health']
+            for i in xrange(len(self.data)):
+                health = self.data[i]['player_info'][self.index]['health']
+                self._health += health
+                
+            self._health = (health / len(self.data)) / float(max_health) 
+            
+        return self._health
+            
     def feature_vector(self, time_scale=5):
         """
         Returns the feature vector of this event as a numpy array.
@@ -62,4 +123,4 @@ class IndividualEvent:
         """
         
         scale = float(time_scale) / self.length
-        return [scale * self.movement, scale * self.displacement]
+        return [scale * self.movement, scale * self.displacement, self.health, scale * self.creep_attacks, scale * self.hero_attacks, scale * self.skill_uses]

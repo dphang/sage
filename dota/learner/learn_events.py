@@ -5,16 +5,20 @@ from learner import Learner
 
 def main():
     # Load individual events
-    with open('training_data/individual_events.json', 'r') as infile:
+    with open('training_data/events.json', 'r') as infile:
         training_data = json.load(infile)
-    with open('test_data/individual_events.json', 'r') as infile:
+    with open('test_data/events.json', 'r') as infile:
         test_data = json.load(infile)
     
-    # Classify individual events
-    individual_learner = Learner()
-    individual_learner.train(training_data[0], training_data[1])
-    for i in test_data:
-        print individual_learner.classify(i)
+    # Classify events
+    learner = Learner()
+    learner.train(training_data[0], training_data[1])
+    
+    test_labels = [learner.classify(i) for i in list(test_data)]
+    test_labels = [str(i) for i in test_labels]
+    
+    with open('test_data/labels.json', 'w') as outfile:
+        json.dump(list(test_labels), outfile, indent=4)    
 
 if __name__ == '__main__':
     main()
