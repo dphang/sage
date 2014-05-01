@@ -53,6 +53,61 @@ class TeamEvent:
             
         return self._movement
     
+    @property
+    def creep_attacks(self):
+        
+        if self._creep_attacks is None:
+            self._creep_attacks = 0
+            
+            for i in xrange(len(self.data)):
+                events = self.data[i]['player_info'][self.index]['events']
+                for e in events:
+                    if e == 'Attacked Creep':
+                        self._creep_attacks += 1
+        
+        return self._creep_attacks
+    
+    @property
+    def hero_attacks(self):
+        
+        if self._hero_attacks is None:
+            self._hero_attacks = 0
+            
+            for i in xrange(len(self.data)):
+                events = self.data[i]['player_info'][self.index]['events']
+                for e in events:
+                    if e == 'Attacked Hero':
+                        self._hero_attacks += 1
+        
+        return self._hero_attacks
+    
+    @property
+    def skill_uses(self):
+        
+        if self._skill_uses is None:
+            self._skill_uses = 0
+            
+            for i in xrange(len(self.data)):
+                events = self.data[i]['player_info'][self.index]['events']
+                for e in events:
+                    if e == 'Helped Hero' or e == 'Helped Self':
+                        self._skill_uses += 1
+        
+        return self._skill_uses
+    
+    @property
+    def health(self):
+        
+        if self._health is None:
+            self._health = 0.0
+            
+            max_health = health = self.data[0]['player_info'][self.index]['max_health']
+            for i in xrange(len(self.data)):
+                health = self.data[i]['player_info'][self.index]['health']
+                self._health += health
+                
+            self._health = (health / len(self.data)) / max_health 
+            
     def feature_vector(self, time_scale=5):
         """
         Returns the feature vector of this event as a numpy array.
